@@ -22,6 +22,9 @@ public class User {
     @Column(nullable = false)
     private String clave;
 
+    @Column(nullable = false)
+    private Boolean isAdmin = false;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -72,6 +75,14 @@ public class User {
 
     public void setClave(String clave) {
         this.clave = clave;
+    }
+
+    public Boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public LocalDateTime getCreatedAt() {

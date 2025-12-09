@@ -49,6 +49,9 @@ public class UserController {
                     user.setName(userDTO.getName());
                     user.setEmail(userDTO.getEmail());
                     user.setClave(userDTO.getClave());
+                    if (userDTO.getIsAdmin() != null) {
+                        user.setIsAdmin(userDTO.getIsAdmin());
+                    }
                     User updatedUser = userRepository.save(user);
                     return ResponseEntity.ok(convertToDTO(updatedUser));
                 })
@@ -76,11 +79,13 @@ public class UserController {
     // Convertir User a UserDTO
     private UserDTO convertToDTO(User user) {
         return new UserDTO(user.getId(), user.getName(), user.getEmail(), 
-                          user.getClave(), user.getCreatedAt());
+                          user.getClave(), user.getIsAdmin(), user.getCreatedAt());
     }
 
     // Convertir UserDTO a User
     private User convertToEntity(UserDTO userDTO) {
-        return new User(userDTO.getName(), userDTO.getEmail(), userDTO.getClave());
+        User user = new User(userDTO.getName(), userDTO.getEmail(), userDTO.getClave());
+        user.setIsAdmin(userDTO.getIsAdmin() != null ? userDTO.getIsAdmin() : false);
+        return user;
     }
 }

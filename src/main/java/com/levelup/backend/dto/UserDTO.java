@@ -14,5 +14,6 @@ public class UserDTO {
     private String email;
     private String clave;
     private Boolean isAdmin;
+    private Boolean active;
     private LocalDateTime createdAt;
 }

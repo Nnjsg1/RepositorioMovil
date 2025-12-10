@@ -87,15 +87,48 @@ public class UserController {
         }
     }
 
-    // Eliminar usuario
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
+    // Desactivar usuario (soft delete)
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<?> deactivateUser(@PathVariable Integer id) {
         try {
-            userService.deleteUser(id);
-            return ResponseEntity.noContent().build();
+            logger.info("Desactivando usuario con ID: {}", id);
+            User deactivatedUser = userService.deactivateUser(id);
+            return ResponseEntity.ok(convertToDTO(deactivatedUser));
         } catch (RuntimeException e) {
+            logger.error("Error al desactivar usuario: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
+
+    // Activar usuario
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<?> activateUser(@PathVariable Integer id) {
+        try {
+            logger.info("Activando usuario con ID: {}", id);
+            User activatedUser = userService.activateUser(id);
+            return ResponseEntity.ok(convertToDTO(activatedUser));
+        } catch (RuntimeException e) {
+            logger.error("Error al activar usuario: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    // Obtener solo usuarios activos
+    @GetMapping("/active")
+    public ResponseEntity<List<UserDTO>> getActiveUsers() {
+        List<UserDTO> users = userService.getActiveUsers().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(users);
+    }
+
+    // Obtener solo usuarios inactivos
+    @GetMapping("/inactive")
+    public ResponseEntity<List<UserDTO>> getInactiveUsers() {
+        List<UserDTO> users = userService.getInactiveUsers().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(users);
     }
 
     // Buscar usuario por email
@@ -109,13 +142,14 @@ public class UserController {
     // Convertir User a UserDTO
     private UserDTO convertToDTO(User user) {
         return new UserDTO(user.getId(), user.getName(), user.getEmail(), 
-                          user.getClave(), user.getIsAdmin(), user.getCreatedAt());
+                          user.getClave(), user.getIsAdmin(), user.getActive(), user.getCreatedAt());
     }
 
     // Convertir UserDTO a User
     private User convertToEntity(UserDTO userDTO) {
         User user = new User(userDTO.getName(), userDTO.getEmail(), userDTO.getClave());
         user.setIsAdmin(userDTO.getIsAdmin() != null ? userDTO.getIsAdmin() : false);
+        user.setActive(userDTO.getActive() != null ? userDTO.getActive() : true);
         return user;
     }
 }

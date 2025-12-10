@@ -30,6 +30,11 @@ public class AuthController {
             return ResponseEntity.ok(new LoginResponse(false, "Contraseña incorrecta", null));
         }
         
+        // Verificar que el usuario esté activo
+        if (!user.getActive()) {
+            return ResponseEntity.ok(new LoginResponse(false, "Usuario desactivado. Contacte al administrador.", null));
+        }
+        
         // Login exitoso
         UserDTO userDTO = new UserDTO(
             user.getId(),
@@ -37,6 +42,7 @@ public class AuthController {
             user.getEmail(),
             user.getClave(),
             user.getIsAdmin(),
+            user.getActive(),
             user.getCreatedAt()
         );
         
@@ -53,6 +59,7 @@ public class AuthController {
         // Crear nuevo usuario
         User user = new User(userDTO.getName(), userDTO.getEmail(), userDTO.getClave());
         user.setIsAdmin(userDTO.getIsAdmin() != null ? userDTO.getIsAdmin() : false);
+        user.setActive(userDTO.getActive() != null ? userDTO.getActive() : true);
         User savedUser = userRepository.save(user);
         
         UserDTO responseDTO = new UserDTO(
@@ -61,6 +68,7 @@ public class AuthController {
             savedUser.getEmail(),
             savedUser.getClave(),
             savedUser.getIsAdmin(),
+            savedUser.getActive(),
             savedUser.getCreatedAt()
         );
         

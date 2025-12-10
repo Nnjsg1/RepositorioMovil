@@ -35,6 +35,11 @@ public class UserService {
             user.setIsAdmin(false);
         }
         
+        // Asegurar que active tenga un valor por defecto
+        if (user.getActive() == null) {
+            user.setActive(true);
+        }
+        
         User savedUser = userRepository.save(user);
         logger.info("Usuario creado exitosamente con ID: {}", savedUser.getId());
         
@@ -63,16 +68,45 @@ public class UserService {
                     if (userDetails.getIsAdmin() != null) {
                         user.setIsAdmin(userDetails.getIsAdmin());
                     }
+                    if (userDetails.getActive() != null) {
+                        user.setActive(userDetails.getActive());
+                    }
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
     }
 
     @Transactional
-    public void deleteUser(Integer id) {
-        if (!userRepository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado con id: " + id);
-        }
-        userRepository.deleteById(id);
+    public User deactivateUser(Integer id) {
+        logger.info("UserService - Desactivando usuario con ID: {}", id);
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setActive(false);
+                    User deactivatedUser = userRepository.save(user);
+                    logger.info("Usuario ID {} desactivado exitosamente", id);
+                    return deactivatedUser;
+                })
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+    }
+
+    @Transactional
+    public User activateUser(Integer id) {
+        logger.info("UserService - Activando usuario con ID: {}", id);
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setActive(true);
+                    User activatedUser = userRepository.save(user);
+                    logger.info("Usuario ID {} activado exitosamente", id);
+                    return activatedUser;
+                })
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
+    }
+
+    public List<User> getActiveUsers() {
+        return userRepository.findByActive(true);
+    }
+
+    public List<User> getInactiveUsers() {
+        return userRepository.findByActive(false);
     }
 }

@@ -17,8 +17,8 @@ public class ProductDTO {
     private String currency;
     private Integer categoryId;
     private Integer stock;
+    private String image;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<ProductImageDTO> images;
     private List<TagDTO> tags;
 }

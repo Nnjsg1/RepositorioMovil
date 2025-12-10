@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductImageDTO {
-    private Integer id;
-    private Integer productId;
-    private String url;
-    private Integer position;
+public class LoginResponse {
+    private boolean success;
+    private String message;
+    private UserDTO user;
 }

@@ -1,7 +1,6 @@
 package com.levelup.backend.controller;
 
 import com.levelup.backend.dto.ProductDTO;
-import com.levelup.backend.dto.ProductImageDTO;
 import com.levelup.backend.dto.TagDTO;
 import com.levelup.backend.model.Product;
 import com.levelup.backend.model.Category;
@@ -10,11 +9,13 @@ import com.levelup.backend.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
+@Transactional
 public class ProductController {
 
     @Autowired
@@ -76,6 +77,7 @@ public class ProductController {
                     product.setPrice(productDTO.getPrice());
                     product.setCurrency(productDTO.getCurrency());
                     product.setStock(productDTO.getStock());
+                    product.setImage(productDTO.getImage());
                     if (productDTO.getCategoryId() != null) {
                         categoryRepository.findById(productDTO.getCategoryId()).ifPresent(product::setCategory);
                     }
@@ -97,11 +99,6 @@ public class ProductController {
 
     // Convertir Product a ProductDTO
     private ProductDTO convertToDTO(Product product) {
-        List<ProductImageDTO> images = product.getImages() != null ?
-                product.getImages().stream()
-                        .map(img -> new ProductImageDTO(img.getId(), img.getProduct().getId(), img.getUrl(), img.getPosition()))
-                        .collect(Collectors.toList()) : List.of();
-
         List<TagDTO> tags = product.getTags() != null ?
                 product.getTags().stream()
                         .map(tag -> new TagDTO(tag.getId(), tag.getName()))
@@ -115,9 +112,9 @@ public class ProductController {
                 product.getCurrency(),
                 product.getCategory() != null ? product.getCategory().getId() : null,
                 product.getStock(),
+                product.getImage(),
                 product.getCreatedAt(),
                 product.getUpdatedAt(),
-                images,
                 tags
         );
     }
@@ -131,6 +128,7 @@ public class ProductController {
                 productDTO.getCurrency()
         );
         product.setStock(productDTO.getStock());
+        product.setImage(productDTO.getImage());
         if (productDTO.getCategoryId() != null) {
             categoryRepository.findById(productDTO.getCategoryId()).ifPresent(product::setCategory);
         }

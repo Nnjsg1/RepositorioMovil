@@ -33,6 +33,9 @@ public class Product {
     @Column
     private Integer stock;
 
+    @Column(nullable = false)
+    private String image;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -42,12 +45,9 @@ public class Product {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductImage> images;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Favorite> favorites;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
         name = "product_tags",
         joinColumns = @JoinColumn(name = "product_id"),
@@ -141,12 +141,12 @@ public class Product {
         this.updatedAt = updatedAt;
     }
 
-    public List<ProductImage> getImages() {
-        return images;
+    public String getImage() {
+        return image;
     }
 
-    public void setImages(List<ProductImage> images) {
-        this.images = images;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public List<Favorite> getFavorites() {

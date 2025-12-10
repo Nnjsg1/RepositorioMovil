@@ -88,6 +88,7 @@ public class NewsController {
                     news.setContent(newsDTO.getContent());
                     news.setSummary(newsDTO.getSummary());
                     news.setImage(newsDTO.getImage());
+                    news.setThumbnail(newsDTO.getThumbnail());
                     news.setAuthor(newsDTO.getAuthor());
                     news.setCategory(newsDTO.getCategory());
                     news.setIsPublished(newsDTO.getIsPublished());
@@ -128,6 +129,7 @@ public class NewsController {
                 news.getContent(),
                 news.getSummary(),
                 news.getImage(),
+                news.getThumbnail(),
                 news.getAuthor(),
                 news.getCategory(),
                 news.getViews(),
@@ -147,6 +149,7 @@ public class NewsController {
                 newsDTO.getAuthor(),
                 newsDTO.getCategory()
         );
+        news.setThumbnail(newsDTO.getThumbnail());
         if (newsDTO.getViews() != null) {
             news.setViews(newsDTO.getViews());
         }

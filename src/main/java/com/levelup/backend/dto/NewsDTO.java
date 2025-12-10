@@ -14,6 +14,7 @@ public class NewsDTO {
     private String content;
     private String summary;
     private String image;
+    private String thumbnail;
     private String author;
     private String category;
     private Integer views;

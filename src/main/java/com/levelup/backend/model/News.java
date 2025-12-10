@@ -25,6 +25,9 @@ public class News {
     @Column
     private String image;
 
+    @Column
+    private String thumbnail;
+
     @Column(length = 100)
     private String author;
 
@@ -98,6 +101,14 @@ public class News {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     public String getAuthor() {

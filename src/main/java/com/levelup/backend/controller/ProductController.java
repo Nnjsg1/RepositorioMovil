@@ -3,7 +3,6 @@ package com.levelup.backend.controller;
 import com.levelup.backend.dto.ProductDTO;
 import com.levelup.backend.dto.TagDTO;
 import com.levelup.backend.model.Product;
-import com.levelup.backend.model.Category;
 import com.levelup.backend.repository.ProductRepository;
 import com.levelup.backend.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;

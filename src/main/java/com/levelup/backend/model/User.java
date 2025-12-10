@@ -1,5 +1,6 @@
 package com.levelup.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -13,12 +14,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @JsonProperty("username")
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonProperty("password")
     @Column(nullable = false)
     private String clave;
 

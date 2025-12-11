@@ -77,6 +77,9 @@ public class ProductController {
                     product.setCurrency(productDTO.getCurrency());
                     product.setStock(productDTO.getStock());
                     product.setImage(productDTO.getImage());
+                    if (productDTO.getDiscontinued() != null) {
+                        product.setDiscontinued(productDTO.getDiscontinued());
+                    }
                     if (productDTO.getCategoryId() != null) {
                         categoryRepository.findById(productDTO.getCategoryId()).ifPresent(product::setCategory);
                     }
@@ -86,14 +89,46 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Eliminar producto
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
-        if (productRepository.existsById(id)) {
-            productRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    // Descontinuar producto
+    @PatchMapping("/{id}/discontinue")
+    public ResponseEntity<ProductDTO> discontinueProduct(@PathVariable Integer id) {
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setDiscontinued(true);
+                    Product updatedProduct = productRepository.save(product);
+                    return ResponseEntity.ok(convertToDTO(updatedProduct));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Reactivar producto descontinuado
+    @PatchMapping("/{id}/reactivate")
+    public ResponseEntity<ProductDTO> reactivateProduct(@PathVariable Integer id) {
+        return productRepository.findById(id)
+                .map(product -> {
+                    product.setDiscontinued(false);
+                    Product updatedProduct = productRepository.save(product);
+                    return ResponseEntity.ok(convertToDTO(updatedProduct));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Obtener productos activos (no descontinuados)
+    @GetMapping("/active")
+    public ResponseEntity<List<ProductDTO>> getActiveProducts() {
+        List<ProductDTO> products = productRepository.findByDiscontinued(false).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(products);
+    }
+
+    // Obtener productos descontinuados
+    @GetMapping("/discontinued")
+    public ResponseEntity<List<ProductDTO>> getDiscontinuedProducts() {
+        List<ProductDTO> products = productRepository.findByDiscontinued(true).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(products);
     }
 
     // Convertir Product a ProductDTO
@@ -112,6 +147,7 @@ public class ProductController {
                 product.getCategory() != null ? product.getCategory().getId() : null,
                 product.getStock(),
                 product.getImage(),
+                product.getDiscontinued(),
                 product.getCreatedAt(),
                 product.getUpdatedAt(),
                 tags
@@ -128,6 +164,7 @@ public class ProductController {
         );
         product.setStock(productDTO.getStock());
         product.setImage(productDTO.getImage());
+        product.setDiscontinued(productDTO.getDiscontinued() != null ? productDTO.getDiscontinued() : false);
         if (productDTO.getCategoryId() != null) {
             categoryRepository.findById(productDTO.getCategoryId()).ifPresent(product::setCategory);
         }

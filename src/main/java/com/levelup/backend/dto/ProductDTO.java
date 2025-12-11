@@ -18,6 +18,7 @@ public class ProductDTO {
     private Integer categoryId;
     private Integer stock;
     private String image;
+    private Boolean discontinued;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<TagDTO> tags;

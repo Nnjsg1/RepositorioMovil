@@ -9,4 +9,5 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findByCategory_Id(Integer categoryId);
     List<Product> findByTitleContainingIgnoreCase(String title);
+    List<Product> findByDiscontinued(Boolean discontinued);
 }

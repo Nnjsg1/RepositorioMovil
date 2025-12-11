@@ -36,6 +36,9 @@ public class Product {
     @Column(nullable = false)
     private String image;
 
+    @Column(nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    private Boolean discontinued = false;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -147,6 +150,14 @@ public class Product {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Boolean getDiscontinued() {
+        return discontinued;
+    }
+
+    public void setDiscontinued(Boolean discontinued) {
+        this.discontinued = discontinued;
     }
 
     public List<Favorite> getFavorites() {
